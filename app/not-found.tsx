@@ -1,0 +1,1 @@
+export default function NotFound(){return <main className="admin-setup"><a className="brand" href="/"><img src="/media/academy-logo.png" alt=""/><b>المحترفون</b></a><div className="confirm-modal"><span className="eyebrow">٤٠٤</span><h1>هذه الصفحة غير موجودة</h1><p>ربما تغيّر رابطها أو لم تُنشر بعد.</p><a className="button green" href="/">العودة إلى الرئيسية</a></div></main>}
