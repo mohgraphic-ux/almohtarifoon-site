@@ -6,5 +6,6 @@ export const siteSchema=z.object({settings:z.record(z.string().max(6000)),home:z
  for(const i of [...d.departments,...d.pages]){if(!i.slug || used.has(i.slug)){ctx.addIssue({code:'custom',message:'رابط الصفحة مكرر أو محجوز'});}if(i.slug)used.add(i.slug);}
  for(const key of ['primary','accent'])if(!/^#[0-9a-fA-F]{6}$/.test(d.settings[key]||''))ctx.addIssue({code:'custom',message:'لون غير صحيح'});
  for(const key of ['facebook','instagram','mapUrl']){const v=d.settings[key];if(v && !/^https:\/\//.test(v))ctx.addIssue({code:'custom',message:'الروابط يجب أن تبدأ ببروتوكول آمن'});}
- for(const v of [d.settings.logo,d.home.image,d.home.aboutImage])if(!image.safeParse(v).success)ctx.addIssue({code:'custom',message:'صورة غير صالحة'});
+ const video=d.home.tourVideo;if(video && !(/^\/media\/[a-zA-Z0-9._-]+\.mp4$/.test(video)||/^https:\/\//.test(video)))ctx.addIssue({code:'custom',message:'أدخل رابط فيديو آمناً أو اتركه فارغاً'});
+ for(const v of [d.settings.logo,d.home.image,d.home.aboutImage,...(d.home.tourPoster?[d.home.tourPoster]:[])])if(!image.safeParse(v).success)ctx.addIssue({code:'custom',message:'صورة غير صالحة'});
 });
