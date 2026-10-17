@@ -1,0 +1,136 @@
+[
+  {
+    "id": "platform-person-0",
+    "title": "الكابتن عامر راتب",
+    "subtitle": "الرئيس التنفيذي - شريك مؤسس",
+    "text": "",
+    "category": "رئيس مجلس الإدارة",
+    "order": 0,
+    "status": "published",
+    "image": "/media/platform-team-0.webp"
+  },
+  {
+    "id": "platform-person-1",
+    "title": "الكابتن ياسر أبو جوهر",
+    "subtitle": "المدير العام - شريك مؤسس",
+    "text": "",
+    "category": "مجلس الإدارة",
+    "order": 1,
+    "status": "published",
+    "image": "/media/platform-team-1.webp"
+  },
+  {
+    "id": "platform-person-2",
+    "title": "الكابتن صالح راتب",
+    "subtitle": "مستشار فني - شريك مؤسس",
+    "text": "",
+    "category": "مجلس الإدارة",
+    "order": 2,
+    "status": "published",
+    "image": "/media/platform-team-2.webp"
+  },
+  {
+    "id": "platform-person-3",
+    "title": "الكابتن محمد داود",
+    "subtitle": "مدير التطوير - شريك مؤسس",
+    "text": "",
+    "category": "مجلس الإدارة",
+    "order": 3,
+    "status": "published",
+    "image": "/media/platform-team-3.webp"
+  },
+  {
+    "id": "platform-person-4",
+    "title": "أحسان التميمي",
+    "subtitle": "شريك مؤسس",
+    "text": "",
+    "category": "مجلس الإدارة",
+    "order": 4,
+    "status": "published"
+  },
+  {
+    "id": "platform-person-5",
+    "title": "الكابتن عامر راتب",
+    "subtitle": "المدير الفني",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 5,
+    "status": "published",
+    "image": "/media/platform-team-5.webp"
+  },
+  {
+    "id": "platform-person-6",
+    "title": "الكابتن ياسر أبو جوهر",
+    "subtitle": "مدير الإدارة الفنية",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 6,
+    "status": "published",
+    "image": "/media/platform-team-6.webp"
+  },
+  {
+    "id": "platform-person-7",
+    "title": "عبدالرحمن راتب",
+    "subtitle": "مدرب الفريق الأول",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 7,
+    "status": "published"
+  },
+  {
+    "id": "platform-person-8",
+    "title": "الكابتن زيد ياسر",
+    "subtitle": "مدير العمليات",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 8,
+    "status": "published",
+    "image": "/media/platform-team-8.webp"
+  },
+  {
+    "id": "platform-person-9",
+    "title": "الكابتن صهيب راتب",
+    "subtitle": "مدرب الفئات العمرية",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 9,
+    "status": "published",
+    "image": "/media/platform-team-9.webp"
+  },
+  {
+    "id": "platform-person-10",
+    "title": "أسامة ذويب",
+    "subtitle": "مدرب اللياقة البدنية",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 10,
+    "status": "published"
+  },
+  {
+    "id": "platform-person-11",
+    "title": "عماد ابراهيم",
+    "subtitle": "مدرب حراس المرمى",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 11,
+    "status": "published"
+  },
+  {
+    "id": "platform-person-12",
+    "title": "عامر أبو قديري",
+    "subtitle": "معالج النادي",
+    "text": "",
+    "category": "الجهاز الفني والمدربون",
+    "order": 12,
+    "status": "published"
+  },
+  {
+    "id": "platform-person-13",
+    "title": "زيد ابو جوهر",
+    "subtitle": "المدير المالي",
+    "text": "",
+    "category": "الإدارة والعمليات",
+    "order": 13,
+    "status": "published"
+  }
+]

@@ -1,8 +1,9 @@
 import { env } from 'cloudflare:workers';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { applyPlatformImport } from './platform-content';
 import { seed, type SiteData } from './content';
 export function db(){ if(!env.DB) throw new Error('قاعدة البيانات غير متاحة'); return env.DB; }
-export async function getContent(){const row=await db().prepare('SELECT data, version FROM content WHERE id = ?').bind('site').first<{data:string;version:number}>();const data=row?JSON.parse(row.data) as SiteData:structuredClone(seed);data.home={...seed.home,...data.home};return {data,version:row?.version||0};}
+export async function getContent(){const row=await db().prepare('SELECT data, version FROM content WHERE id = ?').bind('site').first<{data:string;version:number}>();const data=row?JSON.parse(row.data) as SiteData:structuredClone(seed);data.home={...seed.home,...data.home};applyPlatformImport(data);return {data,version:row?.version||0};}
 export async function admin(){ const user=await getChatGPTUser();if(!user)return null;const row=await db().prepare('SELECT id FROM admins WHERE user_id = ?').bind(user.userId).first();return row?user:null; }
 export function sameOrigin(req:Request){ const origin=req.headers.get('origin');return !!origin && origin===new URL(req.url).origin; }
 export async function audit(action:string,email:string){await db().prepare('INSERT INTO activity (id, action, email, created_at) VALUES (?, ?, ?, ?)').bind(crypto.randomUUID(),action,email,new Date().toISOString()).run();}
