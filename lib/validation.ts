@@ -1,3 +1,4 @@
+import {copyImageKeys} from './copy';
 import {z} from 'zod';
 const image=z.string().max(1000).refine(v=>!v || /^\/media\/[a-zA-Z0-9._-]+$/.test(v)||/^\/api\/media\/[a-zA-Z0-9._-]+$/.test(v),'اختر صورة من مكتبة الوسائط');
 const item=z.object({id:z.string().min(1).max(100),title:z.string().min(1).max(180),subtitle:z.string().max(200).optional(),text:z.string().max(20000),image:image.optional(),template:z.enum(['standard','platform','about']).optional(),ctaLabel:z.string().max(100).optional(),ctaUrl:z.string().max(1000).refine(v=>!v||/^https:\/\//.test(v)).optional(),slug:z.string().regex(/^[a-z][a-z0-9-]{0,70}$/).optional(),category:z.string().max(80).optional(),date:z.string().regex(/^(\d{4}-\d{2}-\d{2})?$/).optional(),status:z.enum(['published','draft']),order:z.number().int().min(0).max(9999),demo:z.boolean().optional(),blocks:z.array(z.object({group:z.string().max(80).optional(),title:z.string().max(180),text:z.string().max(20000)})).max(30).optional()});
@@ -7,5 +8,5 @@ export const siteSchema=z.object({settings:z.record(z.string().max(6000)),home:z
  for(const key of ['primary','accent'])if(!/^#[0-9a-fA-F]{6}$/.test(d.settings[key]||''))ctx.addIssue({code:'custom',message:'لون غير صحيح'});
  for(const key of ['facebook','instagram','mapUrl']){const v=d.settings[key];if(v && !/^https:\/\//.test(v))ctx.addIssue({code:'custom',message:'الروابط يجب أن تبدأ ببروتوكول آمن'});}
  const video=d.home.tourVideo;if(video && !(/^\/media\/[a-zA-Z0-9._-]+\.mp4$/.test(video)||/^https:\/\//.test(video)))ctx.addIssue({code:'custom',message:'أدخل رابط فيديو آمناً أو اتركه فارغاً'});
- for(const v of [d.settings.logo,d.home.image,d.home.aboutImage,...['achievementsImage','galleryImage','newsImage','contactImage','privacyImage'].map(k=>d.home[k]).filter(Boolean),...(d.home.tourPoster?[d.home.tourPoster]:[])])if(!image.safeParse(v).success)ctx.addIssue({code:'custom',message:'صورة غير صالحة'});
+ for(const v of [d.settings.logo,d.home.image,d.home.aboutImage,...['achievementsImage','galleryImage','newsImage','contactImage','privacyImage',...copyImageKeys].map(k=>d.home[k]).filter(Boolean),...(d.home.tourPoster?[d.home.tourPoster]:[])])if(!image.safeParse(v).success)ctx.addIssue({code:'custom',message:'صورة غير صالحة'});
 });

@@ -1,9 +1,10 @@
 'use client';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {Play,Pause,X,Volume2} from 'lucide-react';
+import type {T} from '@/lib/copy';
 
 // Full-bleed cinematic hero: silent looping tour in the background, full tour with sound in a dialog.
-export default function HeroFilm({src,poster,children}:{src:string;poster:string;children:(openTour:(()=>void)|null)=>ReactNode}){
+export default function HeroFilm({src,poster,children,t}:{src:string;poster:string;children:(openTour:(()=>void)|null)=>ReactNode;t:T}){
  const video=useRef<HTMLVideoElement>(null),dialog=useRef<HTMLDialogElement>(null);
  const [ready,setReady]=useState(false),[playing,setPlaying]=useState(false),[load,setLoad]=useState(false),[open,setOpen]=useState(false),[failed,setFailed]=useState(false);
  useEffect(()=>{const motion=matchMedia('(prefers-reduced-motion: reduce)');const update=()=>{if(motion.matches)video.current?.pause();else setLoad(true)};update();motion.addEventListener('change',update);return()=>motion.removeEventListener('change',update)},[]);
@@ -19,6 +20,6 @@ export default function HeroFilm({src,poster,children}:{src:string;poster:string
   </div>
   {children(hasVideo?()=>setOpen(true):null)}
   {hasVideo&&<button className="px-hero-toggle" onClick={toggle} aria-label={playing?'إيقاف حركة الفيديو':'تشغيل حركة الفيديو'}>{playing?<Pause size={14}/>:<Play size={14}/>}</button>}
-  {open&&<dialog ref={dialog} className="tour-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}}><div className="tour-dialog-heading"><div><span>جولة بمرافقنا</span><h2>تعرّف علينا</h2></div><button onClick={close} aria-label="إغلاق الفيديو" autoFocus><X/></button></div><video src={src} poster={poster} controls autoPlay playsInline aria-label="فيديو مرافق المحترفون"/><p><Volume2 size={15}/>بتقدر تتحكم بالصوت والتشغيل من المشغّل</p></dialog>}
+  {open&&<dialog ref={dialog} className="tour-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}}><div className="tour-dialog-heading"><div><span>{t('c_tour_eyebrow')}</span><h2>{t('c_tour_title')}</h2></div><button onClick={close} aria-label="إغلاق الفيديو" autoFocus><X/></button></div><video src={src} poster={poster} controls autoPlay playsInline aria-label="فيديو مرافق المحترفون"/><p><Volume2 size={15}/>{t('c_tour_note')}</p></dialog>}
  </section>;
 }

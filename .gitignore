@@ -57,3 +57,6 @@ next-env.d.ts
 /qa/*.png
 /qa/debug.mjs
 *.tsbuildinfo
+
+# Local Claude Code preview settings
+/.claude/
