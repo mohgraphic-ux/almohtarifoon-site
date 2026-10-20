@@ -19,6 +19,6 @@ export default function HeroFilm({src,poster,children}:{src:string;poster:string
   </div>
   {children(hasVideo?()=>setOpen(true):null)}
   {hasVideo&&<button className="px-hero-toggle" onClick={toggle} aria-label={playing?'إيقاف حركة الفيديو':'تشغيل حركة الفيديو'}>{playing?<Pause size={14}/>:<Play size={14}/>}</button>}
-  {open&&<dialog ref={dialog} className="tour-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}}><div className="tour-dialog-heading"><div><span>جولة في مرافقنا</span><h2>تعرّف على المحترفون</h2></div><button onClick={close} aria-label="إغلاق الفيديو" autoFocus><X/></button></div><video src={src} poster={poster} controls autoPlay playsInline aria-label="فيديو مرافق المحترفون"/><p><Volume2 size={15}/>يمكنك التحكم بالصوت والتشغيل من مشغّل الفيديو.</p></dialog>}
+  {open&&<dialog ref={dialog} className="tour-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}}><div className="tour-dialog-heading"><div><span>جولة بمرافقنا</span><h2>تعرّف علينا</h2></div><button onClick={close} aria-label="إغلاق الفيديو" autoFocus><X/></button></div><video src={src} poster={poster} controls autoPlay playsInline aria-label="فيديو مرافق المحترفون"/><p><Volume2 size={15}/>بتقدر تتحكم بالصوت والتشغيل من المشغّل.</p></dialog>}
  </section>;
 }

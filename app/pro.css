@@ -44,7 +44,7 @@
 .public-site.pro .px-hero-media video{opacity:0;transition:opacity .8s!important}
 .public-site.pro .px-hero-media video.ready{opacity:1}
 .public-site.pro .px-hero:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,#071b14 4%,#071b14b8 38%,#071b1433 72%,#071b1466 100%),linear-gradient(-90deg,#071b14cc 0%,transparent 62%)}
-.public-site.pro .px-hero-copy{padding:clamp(80px,12vh,140px) clamp(16px,5vw,72px) clamp(34px,5vh,56px);max-width:920px}
+.public-site.pro .px-hero-copy{padding:clamp(80px,12vh,140px) clamp(16px,5vw,72px) clamp(34px,5vh,56px);max-width:1120px}
 .public-site.pro .px-hero .px-eyebrow{color:var(--px-gold)}
 .public-site.pro .px-hero h1{font-size:clamp(42px,7vw,100px);line-height:1.08;font-weight:800;margin:0 0 22px;color:#fff}
 .public-site.pro .px-hero h1 span{display:block}

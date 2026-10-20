@@ -8,7 +8,7 @@ export const aboutPage:Item={id:'about',slug:'about',template:'about',title:'م�
 {group:'purpose',title:'رسالتنا',text:'أن نجعل اكتشاف المواهب الكروية في الأردن أوضح وأعدل، بحيث يصل اللاعب المجتهد إلى الفرصة المناسبة مهما كانت مدينته أو الجهة التي تديره.'},
 {group:'purpose',title:'رؤيتنا',text:'أن تكون المحترف المرجع الموثوق لمواهب كرة القدم في الأردن، ثم في المنطقة.'}
 ]};
-export const platformPage:Item={id:'almohtaref-platform',slug:'platform',template:'platform',title:'منصة المحترف',subtitle:'موهبتك تستحق أن تُرى.',text:'من الملعب إلى الفرصة المناسبة. مساحة رقمية تجمع اللاعبين والأندية والأكاديميات والوكلاء والكشافين، لتقديم المواهب الكروية في الأردن بملفات واضحة ومعلومات موثّقة من مصادرها.',image:'/media/football.webp',status:'published',order:1,ctaLabel:'اكتشف منصة المحترف',ctaUrl:'https://almohtaref.app/ar',blocks:[
+export const platformPage:Item={id:'almohtaref-platform',slug:'platform',template:'platform',title:'منصة المحترف',subtitle:'موهبتك لازم تنشاف.',text:'من الملعب للفرصة الصح. مكان واحد بيجمع اللاعبين والأندية والأكاديميات والوكلاء والكشّافين، عشان نعرض مواهب الكورة بالأردن بملفات واضحة ومعلومات موثّقة من مصدرها.',image:'/media/football.webp',status:'published',order:1,ctaLabel:'اكتشف منصة المحترف',ctaUrl:'https://almohtaref.app/ar',blocks:[
 {group:'benefits',title:'هوية ترافق مسيرتك',text:'ملف ومعرّف دائم للاعب، يستمران معه عند انتقال إدارة ملفه من جهة إلى أخرى.'},
 {group:'benefits',title:'معلومة واضحة المصدر',text:'التحقق يتم على مستوى كل معلومة، والتقييم الفني يعرض مصدره؛ لتقرأ الملف بوضوح.'},
 {group:'benefits',title:'بحث يصل للموهبة',text:'ابحث بالاسم أو المعرّف، ثم استكشف بحسب المركز والمحافظة والجنسية والتوفر والجهة المديرة.'},
