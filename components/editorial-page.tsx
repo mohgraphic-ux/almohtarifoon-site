@@ -1,16 +1,18 @@
 'use client';
 import {useState} from 'react';
-import {ArrowUpLeft,Check,ShieldCheck,Users,Goal,ArrowLeft} from 'lucide-react';
+import {ArrowUpLeft,Check,ShieldCheck,Users,Goal} from 'lucide-react';
 import {type Item,type SiteData,live} from '@/lib/content';
+import PageHero from './page-hero';
+import {IconPlatform,IconTeam} from './icons';
 export default function EditorialPage({page,data}:{page:Item;data:SiteData}){
  const [active,setActive]=useState(0),[department,setDepartment]=useState('الجهاز الفني والمدربون');
  const blocks=page.blocks||[],group=(name:string)=>blocks.filter(x=>x.group===name),isPlatform=page.template==='platform';
  const team=live(data.team),departments=Array.from(new Set(team.map(x=>x.category||'فريق العمل'))).filter(x=>!['رئيس مجلس الإدارة','مجلس الإدارة'].includes(x));
  const audience=group('audience'),chosen=audience[Math.min(active,Math.max(0,audience.length-1))];
- const link=<a className="button gold" href={page.ctaUrl||'https://almohtaref.app/ar'} target="_blank" rel="noopener noreferrer">{page.ctaLabel||'زيارة المنصة'}<ArrowUpLeft size={21}/></a>;
+ const link=<a className="px-btn px-btn-gold" href={page.ctaUrl||'https://almohtaref.app/ar'} target="_blank" rel="noopener noreferrer">{page.ctaLabel||'زيارة المنصة'}<ArrowUpLeft size={21}/></a>;
  const member=(x:Item)=><article className="ep-person" key={x.id}><div className={'ep-portrait '+(!x.image?'ep-no-photo':'')}>{x.image?<img src={x.image} alt={x.title} loading="lazy"/>:<Users size={52}/>}</div><div><h3>{x.title}</h3><p>{x.subtitle}</p>{x.text&&<p className="ep-bio">{x.text}</p>}</div></article>;
  return <div className={'editorial-page '+(isPlatform?'ep-platform':'ep-about')}>
- <section className="ep-hero"><div className="ep-hero-copy"><a className="breadcrumb" href="/">الرئيسية <ArrowLeft size={14}/> {page.title}</a><span className="ep-kicker">{page.title}</span><h1>{page.subtitle||page.title}</h1><p>{page.text}</p><div className="ep-actions">{isPlatform?link:<a href="#our-team" className="button gold">تعرّف على فريقنا <ArrowUpLeft size={21}/></a>}<span>من قلب الملعب، في الأردن</span></div></div><div className="ep-hero-visual"><img src={page.image} alt={isPlatform?'تدريبات كرة القدم في أكاديمية المحترفون':'فريق أكاديمية المحترفون'}/><div className="ep-photo-caption"><span>{isPlatform?'المهارة في الملعب. حضورها على المحترف':'خبرة نعيشها كل يوم'}</span><Goal size={28}/></div><div className="ep-orbit" aria-hidden="true"/></div></section>
+ <PageHero image={page.image} tone={isPlatform?'platform':'academy'} eyebrow={page.title} icon={isPlatform?<IconPlatform size={18}/>:<IconTeam size={18}/>} title={page.subtitle||page.title} text={page.text} crumbs={[{href:'/'+page.slug,label:page.title}]} actions={isPlatform?link:<a href="#our-team" className="px-btn px-btn-gold">تعرّف على فريقنا<ArrowUpLeft size={18}/></a>}/>
  {isPlatform?<>
  <section className="section"><div className="ep-section-title"><span className="section-serial">ملف واضح. مسار أوضح</span><h2>كل ما يروي قصّة اللاعب</h2></div><div className="ep-benefits">{group('benefits').map((x,i)=><article key={i}><span className="ep-index">٠{i+1}</span><h3>{x.title}</h3><p>{x.text}</p></article>)}</div></section>
  {audience.length>0&&<section className="ep-audience"><div className="section"><div className="ep-section-title"><span className="section-serial">منظومة واحدة، أدوار متكاملة</span><h2>مساحة تناسب دورك</h2></div><div className="ep-role-tabs" aria-label="اختر دورك في المنصة">{audience.map((x,i)=><button key={i} aria-pressed={active===i} onClick={()=>setActive(i)}>{x.title}</button>)}</div>{chosen&&<div className="ep-role-content" aria-live="polite"><div><Users size={38}/><h3>{chosen.title}</h3><p>{chosen.text}</p>{link}</div><div className="ep-profile-art" aria-hidden="true"><div className="ep-art-top"><span>المحترف</span><ShieldCheck size={26}/></div><div className="ep-art-person"><Goal size={46}/></div><b>لكل موهبة قصّة تستحق الظهور</b><div className="ep-art-lines"><i/><i/><i/></div><span className="ep-art-tag"><Check size={16}/> معلومات واضحة المصدر</span><small>رسم توضيحي لفكرة الملف الرياضي</small></div></div>}</div></section>}

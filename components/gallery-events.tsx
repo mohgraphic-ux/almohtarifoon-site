@@ -3,11 +3,12 @@ import {useEffect,useState} from 'react';
 import {ArrowLeft,ArrowRight,X,Images} from 'lucide-react';
 import {type Item,byDate,entityOf,entityNames,formatDate,type Entity} from '@/lib/content';
 import {IconGallery,IconCalendar,EntityIcon} from './icons';
+import PageHero from './page-hero';
 
 type Occasion={key:string;title:string;entity:Entity;date?:string;photos:Item[]};
 
 // Gallery page: choose a section, then an occasion (e.g. graduation of a class), then browse its photos.
-export default function GalleryEvents({title,gallery,initialAlbum}:{title:string;gallery:Item[];initialAlbum?:string}){
+export default function GalleryEvents({title,image,gallery,initialAlbum}:{title:string;image?:string;gallery:Item[];initialAlbum?:string}){
  const occasions:Occasion[]=[];
  for(const x of [...gallery].sort(byDate)){const entity=entityOf(x.category),name=x.subtitle?.trim()||'صور '+entityNames[entity],key=entity+'|'+name;let o=occasions.find(y=>y.key===key);if(!o){o={key,title:name,entity,date:x.date,photos:[]};occasions.push(o)}o.photos.push(x);if((x.date||'')>(o.date||''))o.date=x.date}
  occasions.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
@@ -18,7 +19,7 @@ export default function GalleryEvents({title,gallery,initialAlbum}:{title:string
  useEffect(()=>{if(shot===null||!current)return;const n=current.photos.length;const fn=(e:KeyboardEvent)=>{if(e.key==='Escape')setShot(null);if(e.key==='ArrowLeft')setShot(s=>s===null?s:(s+1)%n);if(e.key==='ArrowRight')setShot(s=>s===null?s:(s-1+n)%n)};document.addEventListener('keydown',fn);const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.removeEventListener('keydown',fn);document.body.style.overflow=old}},[shot,current]);
  const meta=(o:Occasion)=><span className="gl-meta"><span className={'nw-tag '+o.entity}><EntityIcon entity={o.entity} size={14}/>{entityNames[o.entity]}</span>{o.date&&<time dateTime={o.date}><IconCalendar size={15}/>{formatDate(o.date,'month')}</time>}<span className="gl-count"><IconGallery size={15}/>{o.photos.length===1?'صورة وحدة':o.photos.length===2?'صورتين':o.photos.length+(o.photos.length<=10?' صور':' صورة')}</span></span>;
  return <>
-  <section className="px-gpage-hero"><a className="breadcrumb" href="/">الرئيسية <ArrowLeft size={14}/></a><span className="px-eyebrow"><IconGallery size={18}/>المعرض</span><h1>{current?current.title:title}</h1>{current?meta(current):<p>كل قسم إلو صوره، وكل مناسبة إلها ألبوم</p>}</section>
+  <PageHero image={current?.photos[0]?.image||image} tone={current?.entity||'general'} eyebrow={current?entityNames[current.entity]:'المعرض'} icon={current?<EntityIcon entity={current.entity} size={18}/>:<IconGallery size={18}/>} title={current?current.title:title} text={current?undefined:'كل قسم إلو صوره، وكل مناسبة إلها ألبوم'} crumbs={current?[{href:'/gallery',label:'المعرض'}]:[{href:'/gallery',label:'المعرض'}]} actions={current?meta(current):undefined}/>
   <section className="px-gpage">
    {current?<>
     <button className="gl-back" onClick={()=>go(null)}><ArrowRight size={18}/>كل المناسبات</button>

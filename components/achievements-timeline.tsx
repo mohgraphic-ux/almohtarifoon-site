@@ -3,6 +3,7 @@ import {useEffect,useRef,useState,type CSSProperties} from 'react';
 import {ArrowLeft,Phone,Trophy,Medal} from 'lucide-react';
 import {type Item,type Entity,byDate,entityOf,entityNames,formatDate,telephone} from '@/lib/content';
 import {IconWhistle,IconTrophy,IconCalendar,IconSwim,IconPlatform,EntityIcon} from './icons';
+import PageHero from './page-hero';
 
 // Achievements across the academy, club, pool and platform on one animated timeline.
 export default function AchievementsTimeline({title,text,image,items,logo,phone,onOpen}:{title:string;text:string;image?:string;items:Item[];logo:string;phone:string;onOpen:(x:Item)=>void}){
@@ -17,7 +18,7 @@ export default function AchievementsTimeline({title,text,image,items,logo,phone,
   const onScroll=()=>{const r=el.getBoundingClientRect(),mid=innerHeight*.6;setFill(Math.max(0,Math.min(1,(mid-r.top)/Math.max(1,r.height))))};
   onScroll();addEventListener('scroll',onScroll,{passive:true});return()=>{io.disconnect();removeEventListener('scroll',onScroll)}},[filter]);
  return <>
-  <section className="px-ach-hero">{image&&<img className="px-ach-hero-img" src={image} alt="" fetchPriority="high"/>}<div className="px-ach-hero-in"><div><a className="breadcrumb" href="/">الرئيسية <ArrowLeft size={14}/></a><span className="px-eyebrow"><IconTrophy size={18}/>سجل الإنجازات</span><h1>{title}</h1><p>{text}</p></div>{counts.length>0&&<dl className="px-ach-stats"><div><dt>إنجاز موثّق</dt><dd>{real.length}</dd></div>{counts.map(([e,n])=><div key={e}><dt>{entityNames[e]}</dt><dd>{n}</dd></div>)}</dl>}</div><Trophy className="px-ach-mark" aria-hidden="true"/></section>
+  <PageHero image={image} tone="club" eyebrow="سجل الإنجازات" icon={<IconTrophy size={18}/>} title={title} text={text} crumbs={[{href:'/achievements',label:'الإنجازات'}]} aside={counts.length>0?<dl className="px-ach-stats"><div><dt>إنجاز موثّق</dt><dd>{real.length}</dd></div>{counts.map(([e,n])=><div key={e}><dt>{entityNames[e]}</dt><dd>{n}</dd></div>)}</dl>:undefined}/>
   <section className="tl">
    {sections.length>1&&<div className="tl-filter" role="group" aria-label="اختار الجهة">{['all',...sections].map(x=><button key={x} className={'tl-chip '+x+(filter===x?' on':'')} aria-pressed={filter===x} onClick={()=>setFilter(x)}>{x!=='all'&&<i>{crest(x as Entity)}</i>}{x==='all'?'كل الجهات':entityNames[x as Entity]}</button>)}</div>}
    {list.length>0?<ol className="tl-line" ref={line} style={{'--tl-fill':fill} as CSSProperties}>

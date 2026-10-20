@@ -3,6 +3,7 @@ import {useState} from 'react';
 import {ArrowLeft,ArrowUpLeft,Link2,Check,Newspaper} from 'lucide-react';
 import {type Item,byDate,entityOf,entityNames,formatDate} from '@/lib/content';
 import {IconNews,IconCalendar,EntityIcon} from './icons';
+import PageHero from './page-hero';
 
 const day=(d?:string)=>d?String(Number(d.slice(8,10))).padStart(2,'0'):'—';
 const tag=(x:Item)=><span className={'nw-tag '+entityOf(x.category)}><EntityIcon entity={entityOf(x.category)} size={14}/>{entityNames[entityOf(x.category)]}</span>;
@@ -27,12 +28,12 @@ export function HomeNews({title,news}:{title:string;news:Item[]}){
 }
 
 // News index: lead story, then a filterable editorial grid.
-export function NewsIndex({title,news}:{title:string;news:Item[]}){
+export function NewsIndex({title,image,news}:{title:string;image?:string;news:Item[]}){
  const sorted=[...news].sort(byDate),[filter,setFilter]=useState<string>('all');
  const sections=Array.from(new Set(sorted.map(x=>entityOf(x.category))));
  const list=sorted.filter(x=>filter==='all'||entityOf(x.category)===filter),lead=list[0],rest=list.slice(1);
  return <>
-  <section className="nw-hero"><div className="nw-hero-in"><a className="breadcrumb" href="/">الرئيسية <ArrowLeft size={14}/></a><span className="px-eyebrow"><IconNews size={18}/>الأخبار</span><h1>{title}</h1>{sections.length>1&&<div className="nw-filter" role="group" aria-label="تصفية الأخبار">{['all',...sections].map(x=><button key={x} aria-pressed={filter===x} className={filter===x?'on':''} onClick={()=>setFilter(x)}>{x==='all'?'كل الأخبار':entityNames[x as keyof typeof entityNames]}</button>)}</div>}</div></section>
+  <PageHero image={image} eyebrow="الأخبار" icon={<IconNews size={18}/>} title={title} text="أخبار الأكاديمية والنادي والمسبح والمنصة، أول بأول" crumbs={[{href:'/news',label:'الأخبار'}]} actions={sections.length>1?<div className="nw-filter" role="group" aria-label="تصفية الأخبار">{['all',...sections].map(x=><button key={x} aria-pressed={filter===x} className={filter===x?'on':''} onClick={()=>setFilter(x)}>{x==='all'?'كل الأخبار':entityNames[x as keyof typeof entityNames]}</button>)}</div>:undefined}/>
   <section className="nw-list">
    {lead&&<a className="nw-lead" href={'/news/'+lead.id}><span className="nw-lead-media">{lead.image&&<img src={lead.image} alt=""/>}<span className="nw-latest">آخر خبر</span></span><span className="nw-lead-copy"><span className="nw-meta">{tag(lead)}<time dateTime={lead.date}><IconCalendar size={15}/>{formatDate(lead.date)}</time>{lead.demo&&<span className="px-demo">مثال توضيحي</span>}</span><h2>{lead.title}</h2>{lead.subtitle&&<p className="nw-sub">{lead.subtitle}</p>}<p>{excerpt(lead.text,220)}</p><span className="nw-read">اقرأ الخبر<ArrowLeft size={18}/></span></span></a>}
    {rest.length>0&&<div className="nw-grid">{rest.map(x=><a key={x.id} className="nw-card" href={'/news/'+x.id}><span className="nw-card-media">{x.image?<img src={x.image} alt="" loading="lazy"/>:<Newspaper size={36}/>}<span className="nw-date"><b>{day(x.date)}</b><small>{formatDate(x.date,'month')}</small></span></span><span className="nw-card-copy"><span className="nw-meta">{tag(x)}{x.demo&&<span className="px-demo">مثال توضيحي</span>}</span><h3>{x.title}</h3><p>{excerpt(x.text)}</p><span className="nw-read">اقرأ الخبر<ArrowLeft size={16}/></span></span></a>)}</div>}
@@ -47,8 +48,7 @@ export function NewsArticle({item,news}:{item:Item;news:Item[]}){
  const related=[...news].filter(x=>x.id!==item.id).sort((a,b)=>Number(entityOf(b.category)===entityOf(item.category))-Number(entityOf(a.category)===entityOf(item.category))||byDate(a,b)).slice(0,3);
  const copy=async()=>{try{await navigator.clipboard.writeText(location.href);setCopied(true);setTimeout(()=>setCopied(false),2000)}catch{setCopied(false)}};
  return <article className="nw-article">
-  <header className="nw-article-head"><a className="breadcrumb" href="/news">الأخبار <ArrowLeft size={14}/></a><span className="nw-meta">{tag(item)}<time dateTime={item.date}><IconCalendar size={15}/>{formatDate(item.date)}</time>{item.demo&&<span className="px-demo">مثال توضيحي</span>}</span><h1>{item.title}</h1>{item.subtitle&&<p className="nw-sub">{item.subtitle}</p>}</header>
-  {item.image&&<figure className="nw-article-media"><img src={item.image} alt={item.title}/></figure>}
+  <PageHero image={item.image} tone={entityOf(item.category)} eyebrow={formatDate(item.date)||'خبر'} icon={<IconCalendar size={18}/>} title={item.title} text={item.subtitle} crumbs={[{href:'/news',label:'الأخبار'}]} actions={<span className="nw-meta ph-meta">{tag(item)}{item.demo&&<span className="px-demo">مثال توضيحي</span>}</span>}/>
   <div className="nw-article-body"><div className="nw-text">{item.text.split(/\n+/).filter(Boolean).map((p,i)=><p key={i}>{p}</p>)}</div>
    <aside className="nw-share"><span>شارك الخبر</span><a href={'https://wa.me/?text='+encodeURIComponent(item.title)} onClick={e=>{e.currentTarget.href='https://wa.me/?text='+encodeURIComponent(item.title+' '+location.href)}} target="_blank" rel="noopener noreferrer">واتساب</a><button onClick={copy}>{copied?<><Check size={16}/>تم النسخ</>:<><Link2 size={16}/>انسخ الرابط</>}</button></aside></div>
   {related.length>0&&<section className="nw-related"><h2>أخبار ثانية</h2><div className="nw-grid">{related.map(x=><a key={x.id} className="nw-card" href={'/news/'+x.id}><span className="nw-card-media">{x.image?<img src={x.image} alt="" loading="lazy"/>:<Newspaper size={36}/>}<span className="nw-date"><b>{day(x.date)}</b><small>{formatDate(x.date,'month')}</small></span></span><span className="nw-card-copy"><span className="nw-meta">{tag(x)}</span><h3>{x.title}</h3></span></a>)}</div></section>}
