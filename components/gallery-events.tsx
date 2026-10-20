@@ -2,6 +2,7 @@
 import {useEffect,useState} from 'react';
 import {ArrowLeft,ArrowRight,X,Images} from 'lucide-react';
 import {type Item,byDate,entityOf,entityNames,formatDate,type Entity} from '@/lib/content';
+import {IconGallery,IconCalendar,EntityIcon} from './icons';
 
 type Occasion={key:string;title:string;entity:Entity;date?:string;photos:Item[]};
 
@@ -15,9 +16,9 @@ export default function GalleryEvents({title,gallery,initialAlbum}:{title:string
  const current=occasions.find(o=>o.key===openKey);
  const go=(key:string|null)=>{setOpenKey(key);setShot(null);const u=new URL(location.href);if(key)u.searchParams.set('album',key);else u.searchParams.delete('album');history.replaceState(null,'',u);window.scrollTo({top:0})};
  useEffect(()=>{if(shot===null||!current)return;const n=current.photos.length;const fn=(e:KeyboardEvent)=>{if(e.key==='Escape')setShot(null);if(e.key==='ArrowLeft')setShot(s=>s===null?s:(s+1)%n);if(e.key==='ArrowRight')setShot(s=>s===null?s:(s-1+n)%n)};document.addEventListener('keydown',fn);const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.removeEventListener('keydown',fn);document.body.style.overflow=old}},[shot,current]);
- const meta=(o:Occasion)=><span className="gl-meta"><span className={'nw-tag '+o.entity}>{entityNames[o.entity]}</span>{o.date&&<time dateTime={o.date}>{formatDate(o.date,'month')}</time>}<span>{o.photos.length===1?'صورة وحدة':o.photos.length===2?'صورتين':o.photos.length+(o.photos.length<=10?' صور':' صورة')}</span></span>;
+ const meta=(o:Occasion)=><span className="gl-meta"><span className={'nw-tag '+o.entity}><EntityIcon entity={o.entity} size={14}/>{entityNames[o.entity]}</span>{o.date&&<time dateTime={o.date}><IconCalendar size={15}/>{formatDate(o.date,'month')}</time>}<span className="gl-count"><IconGallery size={15}/>{o.photos.length===1?'صورة وحدة':o.photos.length===2?'صورتين':o.photos.length+(o.photos.length<=10?' صور':' صورة')}</span></span>;
  return <>
-  <section className="px-gpage-hero"><a className="breadcrumb" href="/">الرئيسية <ArrowLeft size={14}/></a><span className="px-eyebrow">المعرض</span><h1>{current?current.title:title}</h1>{current?meta(current):<p>كل قسم إلو صوره، وكل مناسبة إلها ألبوم.</p>}</section>
+  <section className="px-gpage-hero"><a className="breadcrumb" href="/">الرئيسية <ArrowLeft size={14}/></a><span className="px-eyebrow"><IconGallery size={18}/>المعرض</span><h1>{current?current.title:title}</h1>{current?meta(current):<p>كل قسم إلو صوره، وكل مناسبة إلها ألبوم</p>}</section>
   <section className="px-gpage">
    {current?<>
     <button className="gl-back" onClick={()=>go(null)}><ArrowRight size={18}/>كل المناسبات</button>

@@ -8,7 +8,7 @@ export default function HeroFilm({src,poster,children}:{src:string;poster:string
  const [ready,setReady]=useState(false),[playing,setPlaying]=useState(false),[load,setLoad]=useState(false),[open,setOpen]=useState(false),[failed,setFailed]=useState(false);
  useEffect(()=>{const motion=matchMedia('(prefers-reduced-motion: reduce)');const update=()=>{if(motion.matches)video.current?.pause();else setLoad(true)};update();motion.addEventListener('change',update);return()=>motion.removeEventListener('change',update)},[]);
  useEffect(()=>{if(load&&video.current)void video.current.play().catch(()=>setPlaying(false))},[load,src]);
- useEffect(()=>{if(!open)return;dialog.current?.showModal();video.current?.pause();const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.body.style.overflow=old;void video.current?.play().catch(()=>{})}},[open]);
+ useEffect(()=>{if(!open)return;const v=video.current;dialog.current?.showModal();v?.pause();const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.body.style.overflow=old;void v?.play().catch(()=>{})}},[open]);
  function close(){dialog.current?.close();setOpen(false)}
  async function toggle(){if(!video.current)return;if(playing)video.current.pause();else{setLoad(true);try{await video.current.play()}catch{setPlaying(false)}}}
  const hasVideo=!!src&&!failed;
@@ -19,6 +19,6 @@ export default function HeroFilm({src,poster,children}:{src:string;poster:string
   </div>
   {children(hasVideo?()=>setOpen(true):null)}
   {hasVideo&&<button className="px-hero-toggle" onClick={toggle} aria-label={playing?'إيقاف حركة الفيديو':'تشغيل حركة الفيديو'}>{playing?<Pause size={14}/>:<Play size={14}/>}</button>}
-  {open&&<dialog ref={dialog} className="tour-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}}><div className="tour-dialog-heading"><div><span>جولة بمرافقنا</span><h2>تعرّف علينا</h2></div><button onClick={close} aria-label="إغلاق الفيديو" autoFocus><X/></button></div><video src={src} poster={poster} controls autoPlay playsInline aria-label="فيديو مرافق المحترفون"/><p><Volume2 size={15}/>بتقدر تتحكم بالصوت والتشغيل من المشغّل.</p></dialog>}
+  {open&&<dialog ref={dialog} className="tour-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}}><div className="tour-dialog-heading"><div><span>جولة بمرافقنا</span><h2>تعرّف علينا</h2></div><button onClick={close} aria-label="إغلاق الفيديو" autoFocus><X/></button></div><video src={src} poster={poster} controls autoPlay playsInline aria-label="فيديو مرافق المحترفون"/><p><Volume2 size={15}/>بتقدر تتحكم بالصوت والتشغيل من المشغّل</p></dialog>}
  </section>;
 }

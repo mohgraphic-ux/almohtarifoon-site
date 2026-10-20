@@ -29,4 +29,10 @@ export function formatDate(date?:string,style:'full'|'month'='full'){const m=/^(
 export const byDate=(a:Item,b:Item)=>(b.date||'').localeCompare(a.date||'')||a.order-b.order;
 export const live = (items: Item[]) => items.filter(x=>x.status==='published').sort((a,b)=>a.order-b.order);
 export const telephone = (value:string) => 'tel:'+value.replace(/[^+\d]/g,'');
-export function publicData(d:SiteData):SiteData { const copy=structuredClone(d); for(const k of Object.keys(collectionNames) as Collection[]) copy[k]=live(copy[k]); return copy; }
+// House style: no full stop at the end of a heading or paragraph (keeps "..." and "…").
+export const noStop=(t:string)=>t.replace(/(^|[^.])\.(?=[ \t]*(\n|$))/g,'$1');
+const technical=new Set(['email','mapUrl','logo','facebook','instagram','primary','accent','tourVideo','tourPoster','image','aboutImage']);
+export function publicData(d:SiteData):SiteData { const copy=structuredClone(d); for(const k of Object.keys(collectionNames) as Collection[]) copy[k]=live(copy[k]);
+ for(const rec of [copy.settings,copy.home])for(const k of Object.keys(rec))if(!technical.has(k))rec[k]=noStop(rec[k]);
+ for(const k of Object.keys(collectionNames) as Collection[])for(const x of copy[k]){x.title=noStop(x.title);x.text=noStop(x.text);if(x.subtitle)x.subtitle=noStop(x.subtitle);for(const b of x.blocks||[]){b.title=noStop(b.title);b.text=noStop(b.text)}}
+ return copy; }
