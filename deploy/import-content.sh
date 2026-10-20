@@ -5,6 +5,7 @@
 set -euo pipefail
 FILE="${1:?usage: import-content.sh <export.json>}"
 APP_USER=almohtarif APP_DIR=/srv/almohtarifoon-site
+export PATH="/opt/node22/bin:$PATH"
 cd "$APP_DIR"
 SQL="$(mktemp --suffix=.sql)"; trap 'rm -f "$SQL"' EXIT
 node -e '
@@ -16,6 +17,6 @@ fs.writeFileSync(process.argv[2],"INSERT INTO content (id,data,version,updated_a
 ' "$FILE" "$SQL"
 chown "$APP_USER" "$SQL"
 systemctl stop almohtarifoon
-sudo -u "$APP_USER" -H node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file "$SQL"
+sudo -u "$APP_USER" -H env PATH="$PATH" node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file "$SQL"
 systemctl start almohtarifoon
 echo "Content imported."

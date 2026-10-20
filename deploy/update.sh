@@ -3,6 +3,7 @@
 #   sudo bash /srv/almohtarifoon-site/deploy/update.sh
 set -euo pipefail
 APP_USER=almohtarif APP_DIR=/srv/almohtarifoon-site ENV_FILE=/etc/almohtarifoon/site.env
+export PATH="/opt/node22/bin:$PATH"
 cd "$APP_DIR"
 as_app(){ sudo -u "$APP_USER" -H env PATH="$PATH" "$@"; }
 

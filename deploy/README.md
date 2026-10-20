@@ -28,7 +28,7 @@ sudo bash setup-vps.sh spaprofacademy.com your-email@example.com
 ```
 
 السكربت بيسألك عن **إيميل المدير** و**كلمة سر** (12 حرف أو أكثر، ما بتظهر وإنت بتكتبها). وبيعمل لحاله:
-تثبيت Node 22 وNginx، تنزيل الكود من GitHub، البناء، تشغيل الموقع كخدمة بترجع تشتغل لحالها، شهادة HTTPS مجانية (Let's Encrypt)، جدار حماية، ونسخة احتياطية يومية.
+تثبيت Node 22 خاص بالموقع داخل `/opt/node22` (بدون ما يلمس نسخة Node الموجودة)، تنزيل الكود من GitHub، البناء، تشغيل الموقع كخدمة بترجع تشتغل لحالها، موقع Nginx خاص بالدومين، شهادة HTTPS مجانية (Let's Encrypt)، ونسخة احتياطية يومية. السكربت ما بيغيّر الجدار الناري وما بيلمس أي موقع ثاني على نفس السيرفر.
 
 > الإيميل الثاني بالأمر هو لتنبيهات شهادة HTTPS فقط.
 > شهادة HTTPS بتنجح بس بعد ما يكون الدومين موجّه للسيرفر (الخطوة 1).
@@ -61,7 +61,7 @@ sudo bash /srv/almohtarifoon-site/deploy/update.sh
 - حالة الموقع: `systemctl status almohtarifoon`
 - السجلات: `journalctl -u almohtarifoon -n 100 --no-pager`
 - إعادة تشغيل: `sudo systemctl restart almohtarifoon`
-- تغيير كلمة سر المدير: `cd /srv/almohtarifoon-site && node scripts/hash-password.mjs`، ثم ضع الناتج مكان `ADMIN_PASSWORD_HASH` في `/etc/almohtarifoon/site.env`، ثم `sudo bash deploy/update.sh`.
+- تغيير إيميل أو كلمة سر المدير: `sudo bash /srv/almohtarifoon-site/deploy/make-admin.sh spaprofacademy.com` ثم `sudo bash /srv/almohtarifoon-site/deploy/update.sh`.
 - النسخ الاحتياطية: `/var/backups/almohtarifoon` (يومياً، آخر 14 يوم). للاسترجاع: أوقف الخدمة، فك الأرشيف داخل `/srv/almohtarifoon-site`، وشغّلها.
 
 ## ملاحظات

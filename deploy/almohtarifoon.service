@@ -6,7 +6,8 @@ After=network.target
 User=__USER__
 WorkingDirectory=__APP_DIR__
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/npm start -- --port __PORT__
+Environment=PATH=/opt/node22/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/node22/bin/npm start -- --port __PORT__
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
