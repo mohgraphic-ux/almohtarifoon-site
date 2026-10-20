@@ -23,5 +23,10 @@ export const IconUser=make(<><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8
 export const IconGrid=make(<><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></>);
 export const IconPhone=make(<path d="M8.6 4.5 6.4 4a1.6 1.6 0 0 0-1.8 1C4 7 4.3 10.5 7.5 14.5s7.5 5.6 9.6 5.4a1.6 1.6 0 0 0 1.4-1.4l.3-2.3a1.4 1.4 0 0 0-.9-1.5l-2.4-.9a1.4 1.4 0 0 0-1.5.4l-.9 1c-1.6-.8-3.2-2.4-4-4l1-.9a1.4 1.4 0 0 0 .4-1.5l-.9-2.4a1.4 1.4 0 0 0-1-.9z"/>);
 
+export const IconStar=make(<path d="m12 3.8 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>);
+export const IconBriefcase=make(<><rect x="3.5" y="7.5" width="17" height="12" rx="2.5"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3.5 12.5h17M11 12.5v1.5h2v-1.5"/></>);
+export const IconCone=make(<><path d="M10.2 4h3.6l4.7 15H5.5z"/><path d="M8.2 10.5h7.6M6.9 14.8h10.2M3.5 19.5h17"/></>);
+export const IconGear=make(<><circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/><circle cx="12" cy="12" r="6.3"/></>);
+
 // Section → icon, shared by navigation, cards and filters.
 export const EntityIcon=({entity,size}:{entity:string;size?:number})=>entity==='academy'?<IconBall size={size}/>:entity==='club'?<IconShield size={size}/>:entity==='pool'||entity==='swimming'?<IconSwim size={size}/>:entity==='platform'?<IconPlatform size={size}/>:<IconGrid size={size}/>;

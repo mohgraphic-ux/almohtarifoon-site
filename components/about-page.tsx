@@ -1,29 +1,87 @@
 'use client';
-import {useState} from 'react';
-import {ArrowLeft,Users} from 'lucide-react';
+import {useEffect,useRef,useState,type KeyboardEvent,type ReactNode} from 'react';
+import {ArrowLeft,X} from 'lucide-react';
 import {type Item,type SiteData,live} from '@/lib/content';
-import {IconShield,IconTeam,IconWhistle} from './icons';
-import PageHero from './page-hero';
+import {IconShield,IconTeam,IconWhistle,IconStar,IconBriefcase,IconCone,IconGear} from './icons';
 
-// About page mirroring https://almohtaref.app/ar/about: hero, the academy/club family, team by group, mission and vision.
+// About page modelled on almohtaref.app/ar/about: broadcast-style video hero, the academy/club family,
+// an org chart (chair → board → departments as tabs) with a person dialog, then mission and vision.
+const CHAIR='رئيس مجلس الإدارة',BOARD='مجلس الإدارة';
+const departmentInfo:Record<string,{text:string;banner:string;icon:ReactNode}>={
+ 'الجهاز الفني والمدربون':{text:'مدربون معتمدون يقودون تطوير المهارات والأداء البدني والذهني لكل فئة عمرية',banner:'/media/football.webp',icon:<IconCone size={15}/>},
+ 'الإدارة والعمليات':{text:'فريق يدير التسجيل والجداول والتواصل مع أولياء الأمور والشراكات',banner:'/media/campus-entrance.webp',icon:<IconGear size={15}/>},
+};
+const levelOf=(x:Item)=>x.category===CHAIR?{label:'رئيس مجلس الإدارة',icon:<IconStar size={15}/>}:x.category===BOARD?{label:'مجلس الإدارة',icon:<IconBriefcase size={15}/>}:{label:x.category||'فريق العمل',icon:departmentInfo[x.category||'']?.icon||<IconGear size={15}/>};
 const count=(n:number)=>n===1?'عضو واحد':n===2?'عضوان':n<=10?n+' أعضاء':n+' عضواً';
-const groupNotes:Record<string,string>={'الجهاز الفني والمدربون':'خبرة تدريبية تقود التقييم الفني وتطوير الأداء البدني والذهني للاعبين'};
+
+function Silhouette(){return <svg className="ab-silhouette" viewBox="0 0 120 140" aria-hidden="true"><circle cx="60" cy="50" r="24"/><path d="M14 140c4-34 22-52 46-52s42 18 46 52z"/></svg>}
 
 export default function AboutPage({page,data}:{page:Item;data:SiteData}){
  const team=live(data.team),blocks=page.blocks||[],roots=blocks.filter(x=>x.group==='roots'),purpose=blocks.filter(x=>x.group==='purpose');
- const chair=team.filter(x=>x.category==='رئيس مجلس الإدارة'),board=team.filter(x=>x.category==='مجلس الإدارة');
- const departments=Array.from(new Set(team.map(x=>x.category||'فريق العمل'))).filter(x=>!['رئيس مجلس الإدارة','مجلس الإدارة'].includes(x));
- const [department,setDepartment]=useState(departments[0]||''),current=departments.includes(department)?department:departments[0];
- const [first,...headline]=(page.subtitle||page.title).split('\n');
- const member=(x:Item)=><article className="ab-person" key={x.id}><div className="ab-portrait">{x.image?<img src={x.image} alt={x.title} loading="lazy"/>:<Users size={56} aria-hidden="true"/>}</div><div className="ab-person-copy"><h4>{x.title}</h4><p>{x.subtitle}</p></div></article>;
- const group=(label:string,people:Item[],note?:string)=><div className="ab-group"><div className="ab-group-head"><h3>{label}</h3><span>{count(people.length)}</span></div>{note&&<p className="ab-group-note">{note}</p>}<div className={'ab-people'+(people.length===1?' ab-people-solo':'')}>{people.map(member)}</div></div>;
- return <div className="ab-page">
-  <PageHero image={page.image} tone="academy" align="center" eyebrow={page.category} icon={<IconWhistle size={18}/>} title={headline.length?<><span className="ab-hero-first">{first}</span><span className="ab-hero-line">{headline.join(' ')}</span></>:first} text={page.text} crumbs={[{href:'/'+page.slug,label:page.title}]} actions={team.length>0?<a className="px-btn px-btn-gold" href="#our-team">{page.ctaLabel||'تعرّف على الفريق'}<ArrowLeft size={18}/></a>:undefined}/>
-  {roots.length>0&&<section className="ab-section"><div className="ab-title"><span className="px-eyebrow"><IconShield size={18}/>الأكاديمية والنادي</span><h2>عائلة واحدة في الملعب</h2></div><div className="ab-roots">{roots.map((x,i)=><article key={i} className={i===1?'club':''}><img src={i===0?data.settings.logo:'/media/club-logo.png'} alt={x.title}/><div><span>{i===0?'الأكاديمية':'النادي'}</span><h3>{x.title}</h3><p>{x.text}</p></div></article>)}</div></section>}
-  {team.length>0&&<section className="ab-team" id="our-team"><div className="ab-section"><div className="ab-title ab-center"><span className="px-eyebrow"><IconTeam size={18}/>فريق العمل</span><h2>الأشخاص وراء المحترف</h2><p>فريق يجمع الخبرة الكروية والإدارية والتقنية</p></div>
-   <div className="ab-board">{chair.length>0&&group('رئيس مجلس الإدارة',chair)}{board.length>0&&group('أعضاء مجلس الإدارة',board)}</div>
-   {departments.length>0&&<><div className="ab-tabs" role="tablist" aria-label="أقسام فريق العمل">{departments.map(x=><button key={x} role="tab" aria-selected={x===current} className={x===current?'on':''} onClick={()=>setDepartment(x)}><b>{x}</b><small>{count(team.filter(m=>(m.category||'فريق العمل')===x).length)}</small></button>)}</div>{group(current,team.filter(x=>(x.category||'فريق العمل')===current),groupNotes[current])}</>}
+ const chair=team.filter(x=>x.category===CHAIR),board=team.filter(x=>x.category===BOARD);
+ const departments=Array.from(new Set(team.map(x=>x.category||'فريق العمل'))).filter(x=>x!==CHAIR&&x!==BOARD);
+ const [tab,setTab]=useState(0),[person,setPerson]=useState<Item|null>(null);
+ const root=useRef<HTMLDivElement>(null),video=useRef<HTMLVideoElement>(null),dialog=useRef<HTMLDialogElement>(null),opener=useRef<HTMLButtonElement|null>(null),tabs=useRef<(HTMLButtonElement|null)[]>([]);
+ const [first,...rest]=(page.subtitle||page.title).split('\n');
+ const src=data.home.tourVideo,poster=data.home.tourPoster||page.image;
+
+ useEffect(()=>{const el=root.current;if(!el)return;el.classList.add('reveal-ready');const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -10% 0px'});el.querySelectorAll('[data-reveal]').forEach(n=>io.observe(n));return()=>io.disconnect()},[]);
+ useEffect(()=>{const v=video.current;if(!v)return;const motion=matchMedia('(prefers-reduced-motion: reduce)');const apply=()=>{if(motion.matches)v.pause();else void v.play().catch(()=>{})};apply();motion.addEventListener('change',apply);return()=>motion.removeEventListener('change',apply)},[]);
+ useEffect(()=>{const d=dialog.current;if(!d)return;if(person&&!d.open)d.showModal();if(!person&&d.open)d.close()},[person]);
+
+ const open=(x:Item,btn:HTMLButtonElement)=>{opener.current=btn;setPerson(x)};
+ const close=()=>{setPerson(null);opener.current?.focus()};
+ const onTabKey=(e:KeyboardEvent<HTMLButtonElement>,i:number)=>{const n=departments.length;const next=e.key==='ArrowLeft'?(i+1)%n:e.key==='ArrowRight'?(i-1+n)%n:e.key==='Home'?0:e.key==='End'?n-1:-1;if(next<0)return;e.preventDefault();setTab(next);tabs.current[next]?.focus()};
+ const card=(x:Item,big=false)=><button key={x.id} type="button" className={'ab-card'+(big?' ab-card-big':'')} onClick={e=>open(x,e.currentTarget)} aria-haspopup="dialog">
+  <span className="ab-photo">{x.image?<img src={x.image} alt="" loading="lazy"/>:<Silhouette/>}</span>
+  <span className="ab-card-copy"><b>{x.title}</b><span>{x.subtitle}</span><span className="ab-level">{levelOf(x).icon}{levelOf(x).label}</span></span>
+ </button>;
+ const current=departments[Math.min(tab,departments.length-1)],members=team.filter(x=>(x.category||'فريق العمل')===current),info=departmentInfo[current||''];
+
+ return <div className="ab" ref={root}>
+  <section className="ab-hero" aria-labelledby="ab-title">
+   <div className="ab-hero-media" aria-hidden="true">{src?<video ref={video} src={src} poster={poster} autoPlay muted loop playsInline preload="metadata" tabIndex={-1}/>:<img src={poster} alt=""/>}</div>
+   <div className="ab-hero-in">
+    <span className="ab-onair"><i aria-hidden="true"/>{page.category}</span>
+    <h1 id="ab-title"><span>{first}</span>{rest.length>0&&<em>{rest.join(' ')}</em>}</h1>
+    <span className="ab-meter" aria-hidden="true">{Array.from({length:7},(_,i)=><i key={i}/>)}</span>
+    <p>{page.text}</p>
+    {team.length>0&&<a className="px-btn px-btn-gold" href="#team" onClick={e=>{e.preventDefault();document.getElementById('team')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}}>{page.ctaLabel||'تعرّف على الفريق'}<ArrowLeft size={18}/></a>}
+   </div>
+  </section>
+
+  {roots.length>0&&<section className="ab-band" aria-labelledby="ab-family" data-reveal><div className="ab-wrap">
+   <div className="ab-title"><span className="px-eyebrow"><IconShield size={18}/>الأكاديمية والنادي</span><h2 id="ab-family">عائلة واحدة في الملعب</h2></div>
+   <div className="ab-family">{roots.map((x,i)=><article key={i} className={i===1?'club':'academy'}><span className="ab-logo"><img src={i===0?data.settings.logo:'/media/club-logo.png'} alt={x.title}/></span><div><span className="ab-pill">{i===0?'الأكاديمية':'النادي'}</span><h3>{x.title}</h3><p>{x.text}</p></div></article>)}</div>
   </div></section>}
-  {purpose.length>0&&<section className="ab-section"><div className="ab-title"><span className="px-eyebrow"><IconWhistle size={18}/>لماذا نحن هنا</span><h2>رسالتنا ورؤيتنا</h2></div><div className="ab-purpose">{purpose.map((x,i)=><article key={i}><span>{String(i+1).padStart(2,'0')}</span><h3>{x.title}</h3><p>{x.text}</p></article>)}</div></section>}
+
+  <section className="ab-band ab-team" id="team" aria-labelledby="ab-team-title" data-reveal><div className="ab-wrap">
+   <div className="ab-title ab-center"><span className="px-eyebrow"><IconTeam size={18}/>فريق العمل</span><h2 id="ab-team-title">الأشخاص وراء الأكاديمية</h2><p>فريق يجمع الخبرة الفنية والتربوية والإدارية</p></div>
+   {team.length===0?<p className="ab-empty">سيتم الإعلان عن فريق العمل قريبًا</p>:<div className="ab-chart">
+    <img className="ab-watermark" src={data.settings.logo} alt="" aria-hidden="true"/>
+    {chair.length>0&&<div className="ab-tier ab-tier-chair">{chair.map(x=>card(x,true))}</div>}
+    {board.length>0&&<div className="ab-tier ab-tier-board"><span className="ab-tier-label">أعضاء مجلس الإدارة · {count(board.length)}</span><div className="ab-row">{board.map(x=>card(x))}</div></div>}
+    {departments.length>0&&<div className="ab-tier ab-tier-depts">
+     <div className="ab-tabs" role="tablist" aria-label="أقسام فريق العمل">{departments.map((d,i)=><button key={d} ref={el=>{tabs.current[i]=el}} type="button" role="tab" id={'ab-tab-'+i} aria-controls={'ab-panel-'+i} aria-selected={d===current} tabIndex={d===current?0:-1} className={d===current?'on':''} onClick={()=>setTab(i)} onKeyDown={e=>onTabKey(e,i)}><span className="ab-tab-icon">{departmentInfo[d]?.icon||<IconGear size={15}/>}</span><b>{d}</b><small>{count(team.filter(x=>(x.category||'فريق العمل')===d).length)}</small></button>)}</div>
+     <div className="ab-panel" role="tabpanel" id={'ab-panel-'+departments.indexOf(current)} aria-labelledby={'ab-tab-'+departments.indexOf(current)} key={current}>
+      {info&&<div className="ab-banner"><img src={info.banner} alt="" loading="lazy"/><p>{info.text}</p></div>}
+      <div className="ab-row">{members.map(x=>card(x))}</div>
+     </div>
+    </div>}
+   </div>}
+  </div></section>
+
+  {purpose.length>0&&<section className="ab-band ab-purpose-band" aria-labelledby="ab-purpose" data-reveal><div className="ab-wrap">
+   <div className="ab-title"><span className="px-eyebrow"><IconWhistle size={18}/>لماذا نحن هنا</span><h2 id="ab-purpose">رسالتنا ورؤيتنا</h2></div>
+   <div className="ab-statements">{purpose.map((x,i)=><blockquote key={i}><span>{String(i+1).padStart(2,'0')}</span><h3>{x.title}</h3><p>{x.text}</p></blockquote>)}</div>
+  </div></section>}
+
+  <dialog ref={dialog} className="ab-dialog" aria-labelledby="ab-dialog-name" onClose={close} onClick={e=>{if(e.target===dialog.current)close()}}>
+   {person&&<div className="ab-dialog-in">
+    <button type="button" className="ab-dialog-close" onClick={close} aria-label="إغلاق"><X size={20}/></button>
+    <span className="ab-photo ab-photo-lg">{person.image?<img src={person.image} alt={person.title}/>:<Silhouette/>}</span>
+    <div><span className="ab-level">{levelOf(person).icon}{levelOf(person).label}</span><h3 id="ab-dialog-name">{person.title}</h3><p className="ab-role">{person.subtitle}</p>{person.text?<p>{person.text}</p>:<p className="ab-muted">النبذة رح تنضاف قريباً</p>}</div>
+   </div>}
+  </dialog>
  </div>;
 }
