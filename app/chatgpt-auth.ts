@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { selfHosted, readSession } from "@/lib/self-auth";
 
 export type ChatGPTUser = {
   userId: string;
@@ -20,6 +21,10 @@ const CALLBACK_PATH = "/callback";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
+  if (selfHosted()) {
+    const email = await readSession(requestHeaders.get("cookie"));
+    return email ? { userId: `self:${email}`, displayName: email, email, fullName: null } : null;
+  }
   const userId = requestHeaders.get(USER_ID_HEADER);
   const email = requestHeaders.get(USER_EMAIL_HEADER);
   if (!userId || !email) return null;
@@ -45,6 +50,7 @@ export async function requireChatGPTUser(
   const user = await getChatGPTUser();
   if (user) return user;
 
+  if (selfHosted()) redirect(`/admin/login?return_to=${encodeURIComponent(safeRelativeReturnPath(returnTo))}`);
   redirect(chatGPTSignInPath(returnTo));
 }
 
