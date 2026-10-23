@@ -1,5 +1,7 @@
 'use client';
 import {useEffect,useState} from 'react';
+import {flushSync} from 'react-dom';
+import {morph} from './motion';
 import {ArrowLeft,ArrowRight,X,Images} from 'lucide-react';
 import {type Item,byDate,entityOf,formatDate,type Entity} from '@/lib/content';
 import {IconGallery,IconCalendar,EntityIcon} from './icons';
@@ -16,7 +18,7 @@ export default function GalleryEvents({title,image,gallery,initialAlbum,t}:{titl
  const sections=Array.from(new Set(occasions.map(o=>o.entity)));
  const [section,setSection]=useState<string>('all'),[openKey,setOpenKey]=useState<string|null>(initialAlbum||null),[shot,setShot]=useState<number|null>(null);
  const current=occasions.find(o=>o.key===openKey);
- const go=(key:string|null)=>{setOpenKey(key);setShot(null);const u=new URL(location.href);if(key)u.searchParams.set('album',key);else u.searchParams.delete('album');history.replaceState(null,'',u);window.scrollTo({top:0})};
+ const go=(key:string|null,from?:Element|null)=>morph(()=>{flushSync(()=>{setOpenKey(key);setShot(null)});const u=new URL(location.href);if(key)u.searchParams.set('album',key);else u.searchParams.delete('album');history.replaceState(null,'',u);window.scrollTo({top:0})},from);
  useEffect(()=>{if(shot===null||!current)return;const n=current.photos.length;const fn=(e:KeyboardEvent)=>{if(e.key==='Escape')setShot(null);if(e.key==='ArrowLeft')setShot(s=>s===null?s:(s+1)%n);if(e.key==='ArrowRight')setShot(s=>s===null?s:(s-1+n)%n)};document.addEventListener('keydown',fn);const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.removeEventListener('keydown',fn);document.body.style.overflow=old}},[shot,current]);
  const meta=(o:Occasion)=><span className="gl-meta"><span className={'nw-tag '+o.entity}><EntityIcon entity={o.entity} size={14}/>{t(entityKey[o.entity])}</span>{o.date&&<time dateTime={o.date}><IconCalendar size={15}/>{formatDate(o.date,'month')}</time>}<span className="gl-count"><IconGallery size={15}/>{o.photos.length===1?'صورة وحدة':o.photos.length===2?'صورتين':o.photos.length+(o.photos.length<=10?' صور':' صورة')}</span></span>;
  return <>
@@ -27,7 +29,7 @@ export default function GalleryEvents({title,image,gallery,initialAlbum,t}:{titl
     <div className="gl-photos">{current.photos.map((x,i)=><button key={x.id} onClick={()=>setShot(i)} aria-label={'عرض '+x.title}><img src={x.image} alt={x.title} loading="lazy"/><span>{x.title}{x.demo?' · صورة توضيحية':''}</span></button>)}</div>
    </>:<>
     {sections.length>1&&<div className="px-album-tabs px-gpage-chips" role="group" aria-label="اختار القسم">{['all',...sections].map(x=><button key={x} className={section===x?'on':''} aria-pressed={section===x} onClick={()=>setSection(x)}>{x==='all'?t('c_gallery_all'):t(entityKey[x as Entity])}</button>)}</div>}
-    <div className="gl-occasions">{occasions.filter(o=>section==='all'||o.entity===section).map(o=><button key={o.key} className={'gl-occasion '+o.entity} onClick={()=>go(o.key)}>
+    <div className="gl-occasions">{occasions.filter(o=>section==='all'||o.entity===section).map(o=><button key={o.key} className={'gl-occasion '+o.entity} onClick={e=>go(o.key,e.currentTarget.querySelector('.gl-layer-0'))}>
      <span className="gl-stack">{o.photos.slice(0,3).reverse().map((p,i,arr)=><img key={p.id} src={p.image} alt="" loading="lazy" className={'gl-layer-'+(arr.length-1-i)}/>)}</span>
      <span className="gl-occasion-copy">{meta(o)}<b>{o.title}</b><span className="gl-open">{t('c_gallery_open')}<ArrowLeft size={16}/></span></span>
     </button>)}</div>

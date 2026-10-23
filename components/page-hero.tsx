@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import {ArrowLeft} from 'lucide-react';
+import {Words} from './motion';
 
 export type HeroTone='academy'|'club'|'pool'|'platform'|'general';
 
@@ -11,7 +12,7 @@ export default function PageHero({image,eyebrow,icon,title,text,crumbs=[],tone='
    <div className="ph-copy">
     <nav className="ph-crumbs" aria-label="مسار الصفحة"><a href="/">الرئيسية</a>{crumbs.map(c=><span key={c.href}><ArrowLeft size={13}/><a href={c.href}>{c.label}</a></span>)}</nav>
     {eyebrow&&<span className="ph-eyebrow">{icon}{eyebrow}</span>}
-    <h1>{title}</h1>
+    <h1>{typeof title==='string'?<Words text={title}/>:title}</h1>
     {text&&<p>{text}</p>}
     {actions&&<div className="ph-actions">{actions}</div>}
    </div>
